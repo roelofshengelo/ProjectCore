@@ -1,25 +1,20 @@
-﻿using System;
-using System.Diagnostics;
-
-public class SolarSystem : Orbital
+﻿namespace Assets.Data.Models
 {
-    public void Generate()
+    public class SolarSystem : Orbital
     {
-        // Make a single star with a single planet orbiting
-
-        Orbital myStar = new Orbital();
-        myStar.GraphicID = 0;
-        this.AddChild(myStar);
-        
-        for (int i = 0; i < 8; i++)
+        public void Generate()
         {
-            Planet planet = new Planet();
-            planet.Generate(3);
-            myStar.AddChild(planet);
+            // Make a single star with a single planet orbiting
+
+            var myStar = new Orbital {GraphicID = 0};
+            AddChild(myStar);
+
+            for (var i = 0; i < 8; i++)
+            {
+                var planet = new Planet();
+                planet.Generate(3);
+                myStar.AddChild(planet);
+            }
         }
     }
-
-
-
 }
-
