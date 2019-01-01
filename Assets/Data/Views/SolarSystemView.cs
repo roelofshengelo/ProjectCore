@@ -15,6 +15,14 @@ namespace Assets.Data.Views
 
         public Sprite[] Sprites;
 
+        public Sprite[] Stars;
+        public Sprite[] Planets;
+        public Sprite[] Moons;
+
+        private List<Sprite[]> _sprites;
+
+
+
         //public ulong zoomLevels = 1000000; 1x million
         public ulong zoomLevels = 150000000000;
 
@@ -22,6 +30,15 @@ namespace Assets.Data.Views
         private void Start()
         {
             gameController = FindObjectOfType<GameController>();
+
+
+            _sprites = new List<Sprite[]>
+            {
+                Stars,
+                Planets,
+                Moons
+            };
+
             ShowSolarSystem(0);
         }
 
@@ -65,8 +82,8 @@ namespace Assets.Data.Views
 
             var sr = go.AddComponent<SpriteRenderer>();
             sr.drawMode = SpriteDrawMode.Sliced;
-            sr.sprite = Sprites[orbital.GraphicID];
-            sr.size = new Vector2(1, 1); // Smallest object possible
+            //sr.sprite = Sprites[orbital.GraphicID];
+            //sr.size = new Vector2(1, 1); // Smallest object possible
 
 
 
@@ -74,24 +91,27 @@ namespace Assets.Data.Views
             {
                 case Orbital.OrbitalType.Star:
                     sr.name = "Star";
-                    sr.size = new Vector2(15, 15);
+                    sr.sprite = Stars[orbital.GraphicID];
+                    //sr.size = new Vector2(15, 15);
                     break;
                 case Orbital.OrbitalType.Planet:
                     sr.name = "Planet";
-                    sr.size = new Vector2(5, 5);
+                    sr.sprite = Planets[0];//Planets[orbital.GraphicID];
+                    //sr.size = new Vector2(5, 5);
                     break;
                 case Orbital.OrbitalType.Moon:
-                    sr.size = new Vector2(2, 2);
                     sr.name = "Moon";
+                    sr.sprite = Moons[orbital.GraphicID];
+                    //sr.size = new Vector2(2, 2);
                     break;
                 case Orbital.OrbitalType.Moonmoon:
                     sr.name = "Moonmoon";
+                    throw new ArgumentOutOfRangeException("Orbital doesn't have a sprite yet");
                     Debug.Log("Orbital is set as Moonmoon, FIXME!!!");
                     break;
-                case Orbital.OrbitalType.UnSet:
-                    throw new ArgumentOutOfRangeException("Orbital doesn't have a (correct) OrbitalType");
                 default:
                     throw new ArgumentOutOfRangeException("Orbital doesn't have a OrbitalType");
+                    break;
             }
 
             for (var i = 0; i < orbital.Children.Count - 1; i++)

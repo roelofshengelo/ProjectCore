@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.Data.Models
 {
@@ -15,8 +17,8 @@ namespace Assets.Data.Models
             Star,
             Planet,
             Moon,
-            Moonmoon, // You know, a moon that orbits a moon :)
-            UnSet
+            Moonmoon // You know, a moon that orbits a moon :)
+            //UnSet
         }
 
         public OrbitalType Type;
@@ -42,18 +44,21 @@ namespace Assets.Data.Models
 
         public Orbital()
         {
-            TimeToOrbit = 1;
+            TimeToOrbit = 365 * 24 * 60 * 60; // 1 Earth year // 31536000 seconds
             Children = new List<Orbital>();
-            InitAngle = Random.Range(0, Mathf.PI * 2);
-            Type = OrbitalType.UnSet;
+            InitAngle = 0; // Random.Range(0, Mathf.PI * 2);
+
+            GraphicID = -1; // Type must be set before calling GraphicIDForType
         }
 
         public Orbital(OrbitalType orbitalType)
         {
-            TimeToOrbit = 1;
+            TimeToOrbit = 365 * 24 * 60 * 60; // 1 Earth year // 31536000 seconds
             Children = new List<Orbital>();
-            InitAngle = Random.Range(0, Mathf.PI * 2);
+            InitAngle = 0; // Random.Range(0, Mathf.PI * 2);
             Type = orbitalType;
+
+            GraphicID = GraphicIDForType();
         }
 
 
@@ -88,8 +93,8 @@ namespace Assets.Data.Models
             //Debug.Log(string.Format("timeSinceStart: {0}", timeSinceStart));
 
             OffsetAngle = timeSinceStart / (float)TimeToOrbit * 2 * Mathf.PI;
-            //Debug.Log(string.Format("OffsetAngle: {0}", OffsetAngle));
-
+            //Debug.Log("timeSinceStart" + timeSinceStart);
+            //Debug.Log("OffsetAngle" + OffsetAngle);
             // Update all of our children
             for (var i = 0; i < Children.Count; i++) Children[i].Update(timeSinceStart);
         }
@@ -100,11 +105,24 @@ namespace Assets.Data.Models
             return 365 * 24 * 60 * 60;
         }
 
+        private int GraphicIDForType()
+        {
+            if (Type == OrbitalType.Star)
+                return 0;
+            else if (Type == OrbitalType.Planet)
+                return Random.Range(0, 2); //TODO Create PlanetGenerator
+            else if (Type == OrbitalType.Moon)
+                return 0;
+            else
+                Debug.Log("Type '" + Type + "' isn't set to handle current GraphicIDs");
+            throw new IndexOutOfRangeException("Really, no automatic break???");
+        }
+
         public void MakeEarth()
         {
             OffsetAngle = 0;
             OrbitalDistance = 150000000000;
-            TimeToOrbit = 365 * 24 * 60 * 60;
+            TimeToOrbit = 365 * 24 * 60 * 60;  // 1 year // 31536000 seconds
         }
 
         public void AddChild(Orbital c)

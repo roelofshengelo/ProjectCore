@@ -2,11 +2,13 @@
 {
     public class Star : Orbital
     {
+
         public void Generate()
         {
+            Type = OrbitalType.Star;
+
             // Make a single star with a single planet orbiting
             var myStar = new Orbital(OrbitalType.Star);
-            // SR TODO: change to correct ID
 
             AddChild(myStar);
 
