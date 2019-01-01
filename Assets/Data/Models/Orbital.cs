@@ -1,38 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Data.Models
 {
-    public class Orbital {
-
-        public Orbital()
-        {
-            TimeToOrbit = 1;
-            Children = new List<Orbital>();
-            InitAngle = UnityEngine.Random.Range(0, Mathf.PI*2);
-        }
-
-        public Orbital Parent;
-        public List<Orbital> Children;
-
-        public float InitAngle;
-        public float OffsetAngle; // Angle around the parent, in Radians
-        // public float OrbitalDistance;    // Distance as AU -- 1 AU is the average distance from Sun to Earth
-        // public uint OrbitalDistance; // Maaaaaybe in KMs? As long as nothing is more than 4.4 billion
-        // from the sun -- which is the distance of Pluto
-        public UInt64 OrbitalDistance;  // In **meters** -- maybe overkill precision? Maybe not.
-        // Max value is:  18,446,744,073,709,551,615
-        // Pluto is:               4,000,000,000,000
-
-        public UInt64 TimeToOrbit;   // In Seconds?   TODO: Kepler's Third Law
-
-        public int GraphicID;
-
+    public class Orbital
+    {
         // How BIG of a number do we need to represent in our space system?
         // Well, for example, Pluto is about 4 billion (4,000,000,000) kms from
         // the sun/
-
 
         // Keep track of the type of orbital, naming purposes?
         public enum OrbitalType
@@ -40,11 +15,52 @@ namespace Assets.Data.Models
             Star,
             Planet,
             Moon,
-            Moonmoon
+            Moonmoon, // You know, a moon that orbits a moon :)
+            UnSet
         }
+
+        public OrbitalType Type;
+
+        public List<Orbital> Children;
+
+        public int GraphicID;
+
+        public float InitAngle;
+
+        public float OffsetAngle; // Angle around the parent, in Radians
+
+        // public float OrbitalDistance;    // Distance as AU -- 1 AU is the average distance from Sun to Earth
+        // public uint OrbitalDistance; // Maaaaaybe in KMs? As long as nothing is more than 4.4 billion
+        // from the sun -- which is the distance of Pluto
+        public ulong OrbitalDistance; // In **meters** -- maybe overkill precision? Maybe not.
+
+        public Orbital Parent;
+        // Max value is:  18,446,744,073,709,551,615
+        // Pluto is:               4,000,000,000,000
+
+        public ulong TimeToOrbit; // In Seconds?   TODO: Kepler's Third Law
+
+        public Orbital()
+        {
+            TimeToOrbit = 1;
+            Children = new List<Orbital>();
+            InitAngle = Random.Range(0, Mathf.PI * 2);
+            Type = OrbitalType.UnSet;
+        }
+
+        public Orbital(OrbitalType orbitalType)
+        {
+            TimeToOrbit = 1;
+            Children = new List<Orbital>();
+            InitAngle = Random.Range(0, Mathf.PI * 2);
+            Type = orbitalType;
+        }
+
+
+
         // We need to be able to get an X, Y (and maybe Z) coordinate for our location
         // for the purpose of rendering the Oribtal on screen
-        public Vector3 Position 
+        public Vector3 Position
         {
             get
             {
@@ -58,30 +74,24 @@ namespace Assets.Data.Models
                 var offSetY = -Mathf.Cos(InitAngle + OffsetAngle) * OrbitalDistance;
                 const int offSetZ = 0; // Z is locked to zero -- but consider adding Inclination if in 3D
 
-                Vector3 myOffset = new Vector3(offSetX, offSetY, offSetZ);
+                var myOffset = new Vector3(offSetX, offSetY, offSetZ);
 
-                if(Parent != null)
-                {
-                    myOffset += Parent.Position;
-                }
+                if (Parent != null) myOffset += Parent.Position;
 
                 return myOffset;
             }
         }
 
-        public void Update(UInt64 timeSinceStart)
+        public void Update(ulong timeSinceStart)
         {
             // Advance our angle by the correct amount of time.
-            Debug.Log(string.Format("timeSinceStart: {0}", timeSinceStart));
+            //Debug.Log(string.Format("timeSinceStart: {0}", timeSinceStart));
 
-            OffsetAngle = ((float)timeSinceStart / (float)TimeToOrbit) * 2 * Mathf.PI;
-            Debug.Log(string.Format("OffsetAngle: {0}", OffsetAngle));
+            OffsetAngle = timeSinceStart / (float)TimeToOrbit * 2 * Mathf.PI;
+            //Debug.Log(string.Format("OffsetAngle: {0}", OffsetAngle));
 
             // Update all of our children
-            for (int i = 0; i < Children.Count; i++)
-            {
-                Children[i].Update(timeSinceStart);
-            }
+            for (var i = 0; i < Children.Count; i++) Children[i].Update(timeSinceStart);
         }
 
         public ulong OrbitTimeForDistance()
@@ -94,8 +104,8 @@ namespace Assets.Data.Models
         {
             OffsetAngle = 0;
             OrbitalDistance = 150000000000;
-            TimeToOrbit = 365*24*60*60;
-        }    
+            TimeToOrbit = 365 * 24 * 60 * 60;
+        }
 
         public void AddChild(Orbital c)
         {
@@ -108,5 +118,7 @@ namespace Assets.Data.Models
             c.Parent = null;
             Children.Remove(c);
         }
+
+
     }
 }
