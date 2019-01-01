@@ -14,7 +14,7 @@ namespace Assets.Data
         private void OnEnable()
         {
             Galaxy = new Galaxy();
-            Galaxy.Generate(2);
+            Galaxy.Generate(1);
         }
 
         // Update is called once per frame

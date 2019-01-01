@@ -1,12 +1,14 @@
-﻿using Assets.Data.Models;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using Assets.Data.Models;
 using UnityEngine;
 
 namespace Assets.Data.Views
 {
     public class SolarSystemView : MonoBehaviour
     {
-        private GameController _gameController;
+        private GameController gameController;
 
         private Dictionary<Orbital, GameObject> orbitalGameObjectMap;
         private SolarSystem solarSystem;
@@ -19,7 +21,7 @@ namespace Assets.Data.Views
         // Use this for initialization
         private void Start()
         {
-            _gameController = FindObjectOfType<GameController>();
+            gameController = FindObjectOfType<GameController>();
             ShowSolarSystem(0);
         }
 
@@ -35,13 +37,21 @@ namespace Assets.Data.Views
 
             orbitalGameObjectMap = new Dictionary<Orbital, GameObject>();
 
-            solarSystem = _gameController.Galaxy.SolarSystems[solarSystemID];
+            solarSystem = gameController.Galaxy.SolarSystems[solarSystemID];
 
+
+            // Only spawn the first sun for now
+            //MakeSpritesForOrbital(transform, solarSystem.Children[0]);
+
+            //return;
             // Spawn a graphic for each object in the solar system
-
             for (var i = 0; i < solarSystem.Children.Count; i++)
+            // Spawn a graphic for each orbital of the first sun
+            //for (var i = 1; i < solarSystem.Children.Count - 1; i++)
+            {
                 //Orbital orbital = solarSystem.Children[i];
                 MakeSpritesForOrbital(transform, solarSystem.Children[i]);
+            }
         }
 
         private void MakeSpritesForOrbital(Transform transformParent, Orbital orbital)
@@ -54,13 +64,38 @@ namespace Assets.Data.Views
             go.transform.position = orbital.Position / zoomLevels;
 
             var sr = go.AddComponent<SpriteRenderer>();
-
-            if (orbital.GraphicID == 0) Debug.Log("Creating a star!");
-
+            sr.drawMode = SpriteDrawMode.Sliced;
             sr.sprite = Sprites[orbital.GraphicID];
+            sr.size = new Vector2(1, 1);
+
+
+
+            switch (orbital.Type)
+            {
+                case Orbital.OrbitalType.Star:
+                    sr.name = "Star";
+                    break;
+                case Orbital.OrbitalType.Planet:
+                    sr.name = "Planet";
+                    break;
+                case Orbital.OrbitalType.Moon:
+                    sr.name = "Moon";
+                    break;
+                case Orbital.OrbitalType.Moonmoon:
+                    sr.name = "Moonmoon";
+                    Debug.Log("Orbital is set as Moonmoon, FIXME!!!");
+                    break;
+                case Orbital.OrbitalType.UnSet:
+                    throw new ArgumentOutOfRangeException("Orbital doesn't have a (correct) OrbitalType");
+                default:
+                    throw new ArgumentOutOfRangeException("Orbital doesn't have a OrbitalType");
+            }
 
             for (var i = 0; i < orbital.Children.Count - 1; i++)
+            {
                 MakeSpritesForOrbital(go.transform, orbital.Children[i]);
+            }
+
         }
 
         private void UpdateSprites(Orbital orbital)
@@ -69,15 +104,10 @@ namespace Assets.Data.Views
             {
                 var go = orbitalGameObjectMap[orbital];
                 go.transform.position = orbital.Position / zoomLevels;
-                go.name = orbital.OffsetAngle.ToString();
-
-                Debug.Log("============================================");
-                Debug.Log($"orbital {orbital}({orbital.GraphicID})");
-                Debug.Log($"orbital.Children {orbital.Children.Count}");
+                go.name = orbital.OffsetAngle.ToString(CultureInfo.InvariantCulture);
 
                 for (var i = 0; i < orbital.Children.Count - 1; i++)
                 {
-                    Debug.Log($"i {i};");
                     UpdateSprites(orbital.Children[i]);
                 }
             }
@@ -94,11 +124,17 @@ namespace Assets.Data.Views
             // unity position based on an zoom level that might have changed?
 
             if (solarSystem.Children.Count > 0)
+            {
                 for (var i = 0; i < solarSystem.Children.Count - 1; i++)
-                    //Debug.Log($"i {i};");
+                {
                     UpdateSprites(solarSystem.Children[i]);
+                }
+            }
             else
+            {
                 Debug.Log("solarSystem has no children");
+            }
+
         }
 
         public void SetZoomLevel(ulong zl)

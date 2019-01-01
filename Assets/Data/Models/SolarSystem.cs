@@ -6,7 +6,7 @@
         {
             // Make a single star with a single planet orbiting
 
-            var myStar = new Orbital {GraphicID = 0};
+            var myStar = new Orbital(OrbitalType.Star);
             AddChild(myStar);
 
             for (var i = 0; i < 8; i++)

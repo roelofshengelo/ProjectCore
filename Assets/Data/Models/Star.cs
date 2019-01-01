@@ -5,15 +5,16 @@
         public void Generate()
         {
             // Make a single star with a single planet orbiting
-            var myStar = new Orbital {GraphicID = 1};
+            var myStar = new Orbital(OrbitalType.Star);
             // SR TODO: change to correct ID
 
             AddChild(myStar);
 
-            //Orbital planet = new Orbital();
-            //planet.MakeEarth();
-            //planet.GraphicID = 2;
-            //myStar.AddChild(planet);
+            var planet = new Orbital(OrbitalType.Planet);
+            planet.MakeEarth();
+            myStar.AddChild(planet);
         }
+
+
     }
 }

@@ -15,8 +15,11 @@ namespace Assets.Data.Models
             Star,
             Planet,
             Moon,
-            Moonmoon
+            Moonmoon, // You know, a moon that orbits a moon :)
+            UnSet
         }
+
+        public OrbitalType Type;
 
         public List<Orbital> Children;
 
@@ -42,7 +45,18 @@ namespace Assets.Data.Models
             TimeToOrbit = 1;
             Children = new List<Orbital>();
             InitAngle = Random.Range(0, Mathf.PI * 2);
+            Type = OrbitalType.UnSet;
         }
+
+        public Orbital(OrbitalType orbitalType)
+        {
+            TimeToOrbit = 1;
+            Children = new List<Orbital>();
+            InitAngle = Random.Range(0, Mathf.PI * 2);
+            Type = orbitalType;
+        }
+
+
 
         // We need to be able to get an X, Y (and maybe Z) coordinate for our location
         // for the purpose of rendering the Oribtal on screen
@@ -71,10 +85,10 @@ namespace Assets.Data.Models
         public void Update(ulong timeSinceStart)
         {
             // Advance our angle by the correct amount of time.
-            Debug.Log($"timeSinceStart: {timeSinceStart}");
+            //Debug.Log(string.Format("timeSinceStart: {0}", timeSinceStart));
 
-            OffsetAngle = timeSinceStart / (float) TimeToOrbit * 2 * Mathf.PI;
-            Debug.Log($"OffsetAngle: {OffsetAngle}");
+            OffsetAngle = timeSinceStart / (float)TimeToOrbit * 2 * Mathf.PI;
+            //Debug.Log(string.Format("OffsetAngle: {0}", OffsetAngle));
 
             // Update all of our children
             for (var i = 0; i < Children.Count; i++) Children[i].Update(timeSinceStart);
@@ -104,5 +118,7 @@ namespace Assets.Data.Models
             c.Parent = null;
             Children.Remove(c);
         }
+
+
     }
 }
