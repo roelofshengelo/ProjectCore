@@ -66,7 +66,7 @@ namespace Assets.Data.Views
             var sr = go.AddComponent<SpriteRenderer>();
             sr.drawMode = SpriteDrawMode.Sliced;
             sr.sprite = Sprites[orbital.GraphicID];
-            sr.size = new Vector2(1, 1);
+            sr.size = new Vector2(1, 1); // Smallest object possible
 
 
 
@@ -74,11 +74,14 @@ namespace Assets.Data.Views
             {
                 case Orbital.OrbitalType.Star:
                     sr.name = "Star";
+                    sr.size = new Vector2(15, 15);
                     break;
                 case Orbital.OrbitalType.Planet:
                     sr.name = "Planet";
+                    sr.size = new Vector2(5, 5);
                     break;
                 case Orbital.OrbitalType.Moon:
+                    sr.size = new Vector2(2, 2);
                     sr.name = "Moon";
                     break;
                 case Orbital.OrbitalType.Moonmoon:
