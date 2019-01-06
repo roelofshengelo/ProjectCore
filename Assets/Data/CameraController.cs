@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
@@ -21,13 +22,16 @@ namespace Assets.Data
 
         void Start()
         {
+            if (backgrounds is null) throw new ArgumentNullException("backgrounds of CameraController must be set!");
+            if (parallaxScales is null) throw new ArgumentNullException("parallaxScales of CameraController must be set!");
+
             previousCamPos = transform.position;
             parallaxScales = new float[backgrounds.Length];
 
             for (int i = 0; i < backgrounds.Length; i++)
             {
                 parallaxScales[i] = backgrounds[i].position.z * -1;
-                Debug.Log(parallaxScales[i]);
+                //Debug.Log(parallaxScales[i]);
 
             }
 
@@ -53,17 +57,13 @@ namespace Assets.Data
             }
             previousCamPos = transform.position;
 
-
-
             //Keyboard commands
-            float f = 0.0f;
             Vector3 p = GetBaseInput();
             totalRun = Mathf.Clamp(totalRun * 0.5f, 1f, 1000f);
             p = p * mainSpeed;
 
             p = p * Time.deltaTime;
             transform.Translate(p);
-
         }
 
 

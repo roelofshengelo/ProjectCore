@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using Assets.Data.Bridge;
 using Assets.Data.Models;
 using UnityEngine;
 
@@ -19,8 +21,11 @@ namespace Assets.Data.Views
         public Sprite[] Planets;
         public Sprite[] Moons;
 
+        //private int _numOfStars = 1;
+        //private int _numOfPlanets = 1;
+        //private int _numOfMoons = 1;
         private List<Sprite[]> _sprites;
-
+        private TextureDataOrbitals textureData;
 
 
         //public ulong zoomLevels = 1000000; 1x million
@@ -31,15 +36,40 @@ namespace Assets.Data.Views
         {
             gameController = FindObjectOfType<GameController>();
 
+            var solarSystemId = 0;
 
-            _sprites = new List<Sprite[]>
-            {
-                Stars,
-                Planets,
-                Moons
-            };
+            //if (Stars.Length > 0 && Planets.Length > 0 && Moons.Length > 0)
+            //{
+            //    _numOfStars = Stars.Length;
+            //    _numOfPlanets = Planets.Length;
+            //    _numOfMoons = Moons.Length;
 
-            ShowSolarSystem(0);
+            //    var textureData = new TextureDataOrbitals();
+            //    textureData.SolarSystemId = solarSystemId;
+            //    textureData.NumberOfStars = _numOfStars;
+            //    textureData.NumberOfPlanets = _numOfPlanets;
+            //    textureData.NumberOfMoons = _numOfMoons;
+
+            //    var index = 0;
+            //    for (var i = 0; i >= Stars.Length; i++)
+            //    {
+            //        Sprites[index] = Stars[i];
+            //        index++;
+            //    }
+            //    for (var i = 0; i >= Planets.Length; i++)
+            //    {
+            //        Sprites[index] = Planets[i];
+            //        index++;
+            //    }
+            //    for (var i = 0; i >= Moons.Length; i++)
+            //    {
+            //        Sprites[index] = Moons[i];
+            //        index++;
+            //    }
+            //}
+
+
+            ShowSolarSystem(solarSystemId);
         }
 
         public void ShowSolarSystem(int solarSystemID)
@@ -58,16 +88,16 @@ namespace Assets.Data.Views
 
 
             // Only spawn the first sun for now
-            //MakeSpritesForOrbital(transform, solarSystem.Children[0]);
+            //MakeSpritesForOrbital(transform, solarSystem.Orbitals[0]);
 
             //return;
             // Spawn a graphic for each object in the solar system
-            for (var i = 0; i < solarSystem.Children.Count; i++)
+            for (var i = 0; i < solarSystem.Orbitals.Count; i++)
             // Spawn a graphic for each orbital of the first sun
-            //for (var i = 1; i < solarSystem.Children.Count - 1; i++)
+            //for (var i = 1; i < solarSystem.Orbitals.Count - 1; i++)
             {
-                //Orbital orbital = solarSystem.Children[i];
-                MakeSpritesForOrbital(transform, solarSystem.Children[i]);
+                //Orbital orbital = solarSystem.Orbitals[i];
+                MakeSpritesForOrbital(transform, solarSystem.Orbitals[i]);
             }
         }
 
@@ -82,10 +112,6 @@ namespace Assets.Data.Views
 
             var sr = go.AddComponent<SpriteRenderer>();
             sr.drawMode = SpriteDrawMode.Sliced;
-            //sr.sprite = Sprites[orbital.GraphicID];
-            //sr.size = new Vector2(1, 1); // Smallest object possible
-
-
 
             switch (orbital.Type)
             {
@@ -96,7 +122,7 @@ namespace Assets.Data.Views
                     break;
                 case Orbital.OrbitalType.Planet:
                     sr.name = "Planet";
-                    sr.sprite = Planets[0];//Planets[orbital.GraphicID];
+                    sr.sprite = Planets[orbital.GraphicID];
                     //sr.size = new Vector2(5, 5);
                     break;
                 case Orbital.OrbitalType.Moon:
@@ -105,33 +131,29 @@ namespace Assets.Data.Views
                     //sr.size = new Vector2(2, 2);
                     break;
                 case Orbital.OrbitalType.Moonmoon:
-                    sr.name = "Moonmoon";
                     throw new ArgumentOutOfRangeException("Orbital doesn't have a sprite yet");
-                    Debug.Log("Orbital is set as Moonmoon, FIXME!!!");
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException("Orbital doesn't have a OrbitalType");
-                    break;
             }
 
-            for (var i = 0; i < orbital.Children.Count - 1; i++)
+            for (var i = 0; i <= orbital.Orbitals.Count - 1; i++)
             {
-                MakeSpritesForOrbital(go.transform, orbital.Children[i]);
+                MakeSpritesForOrbital(go.transform, orbital.Orbitals[i]);
             }
 
         }
 
         private void UpdateSprites(Orbital orbital)
         {
-            if (solarSystem.Children.Count > 0)
+            if (solarSystem.Orbitals.Count > 0)
             {
                 var go = orbitalGameObjectMap[orbital];
                 go.transform.position = orbital.Position / zoomLevels;
-                go.name = orbital.OffsetAngle.ToString(CultureInfo.InvariantCulture);
+                //go.name = orbital.OffsetAngle.ToString(CultureInfo.InvariantCulture);
 
-                for (var i = 0; i < orbital.Children.Count - 1; i++)
+                for (var i = 0; i <= orbital.Orbitals.Count - 1; i++)
                 {
-                    UpdateSprites(orbital.Children[i]);
+                    UpdateSprites(orbital.Orbitals[i]);
                 }
             }
             else
@@ -146,11 +168,11 @@ namespace Assets.Data.Views
             // Why not loop through each of our orbital images and update their
             // unity position based on an zoom level that might have changed?
 
-            if (solarSystem.Children.Count > 0)
+            if (solarSystem.Orbitals.Count > 0)
             {
-                for (var i = 0; i < solarSystem.Children.Count - 1; i++)
+                for (var i = 0; i <= solarSystem.Orbitals.Count - 1; i++)
                 {
-                    UpdateSprites(solarSystem.Children[i]);
+                    UpdateSprites(solarSystem.Orbitals[i]);
                 }
             }
             else

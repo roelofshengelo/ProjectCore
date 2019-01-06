@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Data.Bridge;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -23,7 +24,9 @@ namespace Assets.Data.Models
 
         public OrbitalType Type;
 
-        public List<Orbital> Children;
+        public List<Orbital> Orbitals;
+
+        public TextureDataOrbitals TextureData;
 
         public int GraphicID;
 
@@ -31,10 +34,34 @@ namespace Assets.Data.Models
 
         public float OffsetAngle; // Angle around the parent, in Radians
 
-        // public float OrbitalDistance;    // Distance as AU -- 1 AU is the average distance from Sun to Earth
-        // public uint OrbitalDistance; // Maaaaaybe in KMs? As long as nothing is more than 4.4 billion
-        // from the sun -- which is the distance of Pluto
-        public ulong OrbitalDistance; // In **meters** -- maybe overkill precision? Maybe not.
+        /// <summary>
+        /// Average distance to object which this orbits in km
+        /// </summary>
+        public ulong OrbitalDistance;
+
+        /// https://en.wikipedia.org/wiki/Orbital_period
+        /// https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
+
+        /// <summary>
+        /// How many days does it take to make a full orbit
+        /// </summary>
+        public int OrbitalPeriod;
+
+        /// <summary>
+        /// How many hours does this object have in a day
+        /// </summary>
+        public int RotationPeriod;
+
+        /// <summary>
+        /// How massive is this object, in kilograms (kg).
+        /// </summary>
+        public float Mass;
+
+        public int Diameter;
+
+        public int Density;
+
+        public double Gravity;
 
         public Orbital Parent;
         // Max value is:  18,446,744,073,709,551,615
@@ -45,17 +72,20 @@ namespace Assets.Data.Models
         public Orbital()
         {
             TimeToOrbit = 365 * 24 * 60 * 60; // 1 Earth year // 31536000 seconds
-            Children = new List<Orbital>();
+            Orbitals = new List<Orbital>();
             InitAngle = 0; // Random.Range(0, Mathf.PI * 2);
+            OffsetAngle = 0;
+            Type = OrbitalType.Planet;
 
-            GraphicID = -1; // Type must be set before calling GraphicIDForType
+            GraphicID = 0; // Type must be set before calling GraphicIDForType
         }
 
         public Orbital(OrbitalType orbitalType)
         {
             TimeToOrbit = 365 * 24 * 60 * 60; // 1 Earth year // 31536000 seconds
-            Children = new List<Orbital>();
+            Orbitals = new List<Orbital>();
             InitAngle = 0; // Random.Range(0, Mathf.PI * 2);
+            OffsetAngle = 0;
             Type = orbitalType;
 
             GraphicID = GraphicIDForType();
@@ -92,11 +122,18 @@ namespace Assets.Data.Models
             // Advance our angle by the correct amount of time.
             //Debug.Log(string.Format("timeSinceStart: {0}", timeSinceStart));
 
-            OffsetAngle = timeSinceStart / (float)TimeToOrbit * 2 * Mathf.PI;
+            OffsetAngle = timeSinceStart / ((float)TimeToOrbit * 2 * Mathf.PI);
             //Debug.Log("timeSinceStart" + timeSinceStart);
             //Debug.Log("OffsetAngle" + OffsetAngle);
             // Update all of our children
-            for (var i = 0; i < Children.Count; i++) Children[i].Update(timeSinceStart);
+            for (var i = 0; i < Orbitals.Count; i++)
+            {
+                Orbitals[i].Update(timeSinceStart);
+                if (Orbitals[i].RotationPeriod.Equals(24))
+                {
+                    Debug.Log("OffsetAngle for Earth: " + Orbitals[i].OffsetAngle);
+                }
+            }
         }
 
         public ulong OrbitTimeForDistance()
@@ -118,23 +155,23 @@ namespace Assets.Data.Models
             throw new IndexOutOfRangeException("Really, no automatic break???");
         }
 
-        public void MakeEarth()
-        {
-            OffsetAngle = 0;
-            OrbitalDistance = 150000000000;
-            TimeToOrbit = 365 * 24 * 60 * 60;  // 1 year // 31536000 seconds
-        }
+        //public void MakeEarth()
+        //{
+        //    OffsetAngle = 0;
+        //    OrbitalDistance = 150000000000;
+        //    TimeToOrbit = 365 * 24 * 60 * 60;  // 1 year // 31536000 seconds
+        //}
 
-        public void AddChild(Orbital c)
+        public void AddOrbital(Orbital c)
         {
             c.Parent = this;
-            Children.Add(c);
+            Orbitals.Add(c);
         }
 
-        public void RemoveChild(Orbital c)
+        public void RemoveOrbital(Orbital c)
         {
             c.Parent = null;
-            Children.Remove(c);
+            Orbitals.Remove(c);
         }
 
 

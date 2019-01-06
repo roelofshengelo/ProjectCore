@@ -3,19 +3,18 @@
     public class Star : Orbital
     {
 
-        public void Generate()
-        {
-            Type = OrbitalType.Star;
+        //public void Generate()
+        //{
+        //    Type = OrbitalType.Star;
 
-            // Make a single star with a single planet orbiting
-            var myStar = new Orbital(OrbitalType.Star);
+        //    // Make a single star with a single planet orbiting
+        //    var myStar = new Orbital(OrbitalType.Star);
 
-            AddChild(myStar);
+        //    AddOrbital(myStar);
 
-            var planet = new Orbital(OrbitalType.Planet);
-            planet.MakeEarth();
-            myStar.AddChild(planet);
-        }
+        //    var planet = new Orbital(OrbitalType.Planet);
+        //    myStar.AddOrbital(planet);
+        //}
 
 
     }
