@@ -108,7 +108,8 @@ namespace Assets.Data.Views
             go.transform.SetParent(transformParent);
 
             // Set our position.
-            go.transform.position = orbital.Position / zoomLevels;
+            //go.transform.position = orbital.Position / zoomLevels;
+            go.transform.position = orbital.Position(gameController.DaysPastSinceStart, zoomLevels);
 
             var sr = go.AddComponent<SpriteRenderer>();
             sr.drawMode = SpriteDrawMode.Sliced;
@@ -148,8 +149,8 @@ namespace Assets.Data.Views
             if (solarSystem.Orbitals.Count > 0)
             {
                 var go = orbitalGameObjectMap[orbital];
-                go.transform.position = orbital.Position / zoomLevels;
-                //go.name = orbital.OffsetAngle.ToString(CultureInfo.InvariantCulture);
+                go.transform.position = orbital.Position(gameController.DaysPastSinceStart, zoomLevels);
+                //go.name = orbital.OrbitalOffsetAngle.ToString(CultureInfo.InvariantCulture);
 
                 for (var i = 0; i <= orbital.Orbitals.Count - 1; i++)
                 {

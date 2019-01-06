@@ -1,4 +1,5 @@
-﻿using Assets.Data.Models;
+﻿using System;
+using Assets.Data.Models;
 using UnityEngine;
 
 namespace Assets.Data
@@ -6,9 +7,19 @@ namespace Assets.Data
     //GameController that is used by Unity
     public class GameController : MonoBehaviour
     {
+
+        /// <summary>
+        /// Amount of days past since game start (including time skips)
+        /// </summary>
+        public ulong DaysPastSinceStart => (ulong)(galacticDay + (30 * galacticMonth - 1) + (30 * (galacticMonth - 1) * (galacticYear - 1)));
+
+        /// <summary>
+        /// How many seconds past since the start
+        /// </summary>
         private ulong galacticTime;
         private int galacticDay = 1;
         private int galacticMonth = 1;
+        private int galacticYear = 1;
 
         public Galaxy Galaxy;
 
@@ -31,7 +42,7 @@ namespace Assets.Data
         private void FixedUpdate()
         {
             if (_prevSecond >= (int)Time.time) return;
-            AdvanceTimeDay(10);
+            AdvanceTimeDay(1);
             //AdvanceTimeMonth(6);
             //AdvanceTime(1);
             _prevSecond = (int)Time.time;
@@ -39,15 +50,25 @@ namespace Assets.Data
 
         public void AdvanceTimeDay(int numDays)
         {
-            Debug.Log("===== Current day: " + galacticDay + " of month: " + galacticMonth);
+            Debug.Log("===== Current day: " + galacticDay + " of month: " + galacticMonth + " of year: " + galacticYear);
             //Debug.Log("Current galacticTime: " + galacticTime);
 
             ulong daysInSeconds = (24 * 60 * 60) * (uint)numDays;
 
-            galacticTime = galacticTime + (uint)daysInSeconds;
+            //galacticTime = galacticTime + (uint)daysInSeconds;
 
-            Galaxy.Update(galacticTime);
+            //Galaxy.Update(galacticTime);
+            AdvanceTime(daysInSeconds);
+
             galacticDay += numDays;
+
+            if (galacticMonth > 12)
+            {
+                galacticDay = 1;
+                galacticMonth = 1;
+                galacticYear++;
+                return;
+            }
 
             if (galacticDay > 30)
             {
@@ -64,13 +85,16 @@ namespace Assets.Data
             AdvanceTimeDay(numMonths * 30);
         }
 
-
-        public void AdvanceTime(int numSeconds)
+        /// <summary>
+        /// Really, in seconds? Maybe for RTS on planets or something
+        /// </summary>
+        /// <param name="numSeconds"></param>
+        public void AdvanceTime(ulong numSeconds)
         {
-            galacticTime = galacticTime + (uint)numSeconds;
+            galacticTime = galacticTime + numSeconds;
 
             Galaxy.Update(galacticTime);
-            Debug.Log("===== Current day: " + galacticDay + " of month: " + galacticMonth);
+            Debug.Log("===== Current day: " + galacticDay + " of month: " + galacticMonth + " of year: " + galacticYear);
             //Debug.Log("Current galacticTime: " + galacticTime);
         }
 

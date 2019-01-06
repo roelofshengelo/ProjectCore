@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 namespace Assets.Data.Models
 {
@@ -7,14 +8,14 @@ namespace Assets.Data.Models
     {
         /// <summary>
         /// Generate a random planet with a set number of moons
-        /// The planet will have a random OrbitalDistance and calculated TimeToOrbit by it's distance
+        /// The planet will have a random OrbitRadius and calculated TimeToOrbit by it's distance
         /// </summary>
         /// <param name="maxMoons">How many moons do you want?</param>
         public void Generate(int maxMoons)
         {
             Type = OrbitalType.Planet;
             // Randomize our values
-            GenerateOrbitalDistance();
+            //GenerateOrbitalDistance();
 
             GenerateMoons(maxMoons);
         }
@@ -23,7 +24,7 @@ namespace Assets.Data.Models
         {
             Type = OrbitalType.Planet;
             // Randomize our values
-            GenerateOrbitalDistance();
+            //GenerateOrbitalDistance();
 
             if (maxMoons <= 0)
             {
@@ -66,17 +67,9 @@ namespace Assets.Data.Models
             {
                 var moon = new Orbital(OrbitalType.Moon);
                 AddOrbital(moon);
-                moon.OrbitalDistance = this.OrbitalDistance / 10; //1000000000000; // FIXME: This makes no sense;
-                moon.TimeToOrbit = moon.OrbitTimeForDistance() / 10; // TODO: Fix with real physics!
+                moon.OrbitRadius = this.OrbitRadius / 10; //1000000000000; // FIXME: This makes no sense;
+                moon.OrbitalPeriod = moon.OrbitTimeForDistance() / 10; // TODO: Fix with real physics!
             }
-        }
-
-        private void GenerateOrbitalDistance()
-        {
-            //OrbitalDistance = (ulong)(Random.Range(5, 1000) * 1000000); // 5-1000  million kilometers
-            //OrbitalDistance = (ulong)(Random.Range(5, 1000) * 10000000000);
-            OrbitalDistance = 100000000;
-            TimeToOrbit = OrbitTimeForDistance(); // TODO: Fix with real physics!
         }
 
         private const int multiplierMass = (10 ^ 24);
@@ -91,8 +84,9 @@ namespace Assets.Data.Models
                 Density = 5427,
                 Gravity = 3.7,
                 RotationPeriod = 1408,
-                OrbitalDistance = (ulong)57.9 * multiplierDistance,
-                OrbitalPeriod = 88
+                OrbitRadius = (ulong)57.9 * multiplierDistance,
+                OrbitalPeriod = 88,
+                OrbitalInitAngle = 67
             };
 
         }
@@ -108,8 +102,9 @@ namespace Assets.Data.Models
                 Density = 5243,
                 Gravity = 8.9,
                 RotationPeriod = -5832,
-                OrbitalDistance = (ulong)108.2 * multiplierDistance,
-                OrbitalPeriod = 224
+                OrbitRadius = (ulong)108.2 * multiplierDistance,
+                OrbitalPeriod = 224,
+                OrbitalInitAngle = 30
             };
         }
 
@@ -122,8 +117,9 @@ namespace Assets.Data.Models
                 Density = 5514,
                 Gravity = 9.8,
                 RotationPeriod = 24,
-                OrbitalDistance = (ulong)149.6 * multiplierDistance,
-                OrbitalPeriod = 365
+                OrbitRadius = (ulong)149.6 * multiplierDistance,
+                OrbitalPeriod = 365,
+                OrbitalInitAngle = 338
             };
             var moon = new Orbital(OrbitalType.Moon)
             {
@@ -132,8 +128,9 @@ namespace Assets.Data.Models
                 Density = 3340,
                 Gravity = 1.6,
                 RotationPeriod = 708,
-                OrbitalDistance = (ulong)0.384 * multiplierDistance,
-                OrbitalPeriod = 27
+                OrbitRadius = (ulong)0.384 * multiplierDistance,
+                OrbitalPeriod = 27,
+                OrbitalInitAngle = 0
             };
             earth.AddOrbital(moon);
             return earth;
@@ -148,8 +145,9 @@ namespace Assets.Data.Models
                 Density = 3933,
                 Gravity = 3.7,
                 RotationPeriod = 10,
-                OrbitalDistance = (ulong)227.9 * multiplierDistance,
-                OrbitalPeriod = 687
+                OrbitRadius = (ulong)227.9 * multiplierDistance,
+                OrbitalPeriod = 687,
+                OrbitalInitAngle = 300
             };
             // Todo Add moons
             return mars;
@@ -164,8 +162,9 @@ namespace Assets.Data.Models
                 Density = 1326,
                 Gravity = 23.1,
                 RotationPeriod = 10,
-                OrbitalDistance = (ulong)778.6 * multiplierDistance,
-                OrbitalPeriod = 4331
+                OrbitRadius = (ulong)778.6 * multiplierDistance,
+                OrbitalPeriod = 4331,
+                OrbitalInitAngle = 260
             };
             // Todo Add moons
             return jupiter;
@@ -180,8 +179,9 @@ namespace Assets.Data.Models
                 Density = 687,
                 Gravity = 9,
                 RotationPeriod = 10,
-                OrbitalDistance = (ulong)1433.5 * multiplierDistance,
-                OrbitalPeriod = 10747
+                OrbitRadius = (ulong)1433.5 * multiplierDistance,
+                OrbitalPeriod = 10747,
+                OrbitalInitAngle = 135
             };
             // Todo Add moons
             return saturn;
@@ -196,8 +196,9 @@ namespace Assets.Data.Models
                 Density = 1271,
                 Gravity = 8.7,
                 RotationPeriod = -17,
-                OrbitalDistance = (ulong)2872.5 * multiplierDistance,
-                OrbitalPeriod = 30589
+                OrbitRadius = (ulong)2872.5 * multiplierDistance,
+                OrbitalPeriod = 30589,
+                OrbitalInitAngle = 120
             };
             // Todo Add moons
             return uranus;
@@ -211,8 +212,9 @@ namespace Assets.Data.Models
                 Density = 1638,
                 Gravity = 11.0,
                 RotationPeriod = 16,
-                OrbitalDistance = (ulong)4495.1 * multiplierDistance,
-                OrbitalPeriod = 59800
+                OrbitRadius = (ulong)4495.1 * multiplierDistance,
+                OrbitalPeriod = 59800,
+                OrbitalInitAngle = 100
             };
             // Todo Add moons
             return neptune;
@@ -226,8 +228,9 @@ namespace Assets.Data.Models
                 Density = 2095,
                 Gravity = 0.7,
                 RotationPeriod = -153,
-                OrbitalDistance = (ulong)5906.4 * multiplierDistance,
-                OrbitalPeriod = 90560
+                OrbitRadius = (ulong)5906.4 * multiplierDistance,
+                OrbitalPeriod = 90560,
+                OrbitalInitAngle = 50
             };
             // Todo Add moons
             return pluto;
@@ -235,8 +238,8 @@ namespace Assets.Data.Models
 
         //public void MakeEarth()
         //{
-        //    OffsetAngle = 0; // "North" of the sun
-        //    OrbitalDistance = 150000000000; // 150 million KM
+        //    OrbitalInitAngle = 0; // "North" of the sun
+        //    OrbitRadius = 150000000000; // 150 million KM
         //    TimeToOrbit = 365 * 24 * 60 * 60;
         //}
 

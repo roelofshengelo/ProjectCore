@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Assets.Data.Bridge;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -30,14 +31,39 @@ namespace Assets.Data.Models
 
         public int GraphicID;
 
-        public float InitAngle;
+        /// <summary>
+        /// Starting angle around the parent, in Radians
+        /// </summary>
+        public float OrbitalInitAngle;
 
-        public float OffsetAngle; // Angle around the parent, in Radians
+        /// <summary>
+        /// Current angle around the parent, in Radians
+        /// </summary>
+        public float OrbitalOffsetAngle;
 
+
+
+        private ulong _radius = 0;
+        private ulong _diameter = 0;
+        private ulong _circumference = 0;
         /// <summary>
         /// Average distance to object which this orbits in km
         /// </summary>
-        public ulong OrbitalDistance;
+
+        public ulong OrbitRadius
+        {
+            get => _radius;
+            set
+            {
+                _radius = value;
+                _diameter = (ulong)(2 * Mathf.PI * _radius);
+                _circumference = (ulong)Mathf.PI * _diameter;
+            }
+        }
+
+        public float OrbitalDiameter => _diameter;
+
+        public float OrbitalCircumference => _circumference;
 
         /// https://en.wikipedia.org/wiki/Orbital_period
         /// https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
@@ -49,6 +75,7 @@ namespace Assets.Data.Models
 
         /// <summary>
         /// How many hours does this object have in a day
+        /// TODO Make this so that different species react on this period, imagine having days of 750 hours, good-luck adjusting
         /// </summary>
         public int RotationPeriod;
 
@@ -59,6 +86,10 @@ namespace Assets.Data.Models
 
         public int Diameter;
 
+        //public int Radius => Diameter / 2;
+
+        //public int Volume;
+
         public int Density;
 
         public double Gravity;
@@ -67,14 +98,14 @@ namespace Assets.Data.Models
         // Max value is:  18,446,744,073,709,551,615
         // Pluto is:               4,000,000,000,000
 
-        public ulong TimeToOrbit; // In Seconds?   TODO: Kepler's Third Law
+        //public ulong TimeToOrbit; // In Seconds?   TODO: Kepler's Third Law
 
         public Orbital()
         {
-            TimeToOrbit = 365 * 24 * 60 * 60; // 1 Earth year // 31536000 seconds
+            OrbitalPeriod = 365 * 24; // 1 Earth year in hour
             Orbitals = new List<Orbital>();
-            InitAngle = 0; // Random.Range(0, Mathf.PI * 2);
-            OffsetAngle = 0;
+            OrbitalInitAngle = 0; // Random.Range(0, Mathf.PI * 2);
+            OrbitalOffsetAngle = 0;
             Type = OrbitalType.Planet;
 
             GraphicID = 0; // Type must be set before calling GraphicIDForType
@@ -82,64 +113,109 @@ namespace Assets.Data.Models
 
         public Orbital(OrbitalType orbitalType)
         {
-            TimeToOrbit = 365 * 24 * 60 * 60; // 1 Earth year // 31536000 seconds
+            OrbitalPeriod = 365 * 24; // 1 Earth year in hour
             Orbitals = new List<Orbital>();
-            InitAngle = 0; // Random.Range(0, Mathf.PI * 2);
-            OffsetAngle = 0;
+            OrbitalInitAngle = 0; // Random.Range(0, Mathf.PI * 2);
+            OrbitalOffsetAngle = 0;
             Type = orbitalType;
 
             GraphicID = GraphicIDForType();
         }
 
 
-
+        // http://www.stjarnhimlen.se/comp/tutorial.html
         // We need to be able to get an X, Y (and maybe Z) coordinate for our location
         // for the purpose of rendering the Oribtal on screen
-        public Vector3 Position
+        public Vector3 Position(ulong daysPastSinceStart, ulong zoomlevels)
         {
-            get
-            {
-                // TODO: Convert our orbit info into a vector that we can use
-                // to render something as a Unity GameObject
 
-                // Consider whether or not we should be saving Vector3 in a 
-                // private variable whenever we update our angle, or if it's
-                // no slower to just calculate on demand like this.
-                var offSetX = Mathf.Sin(InitAngle + OffsetAngle) * OrbitalDistance;
-                var offSetY = -Mathf.Cos(InitAngle + OffsetAngle) * OrbitalDistance;
-                const int offSetZ = 0; // Z is locked to zero -- but consider adding Inclination if in 3D
 
-                var myOffset = new Vector3(offSetX, offSetY, offSetZ);
 
-                if (Parent != null) myOffset += Parent.Position;
+            var circumferencePerDay = this.OrbitalCircumference / this.OrbitalPeriod;
+            var circumferenceTotal = circumferencePerDay * daysPastSinceStart;
 
-                return myOffset;
-            }
+            //this.OrbitalOffsetAngle = 5;
+
+            //var offSetX = Mathf.Sin(circumferenceTotal) * OrbitRadius;
+            //var offSetY = -Mathf.Cos(circumferenceTotal) * OrbitRadius;
+            //const int offSetZ = 0; // Z is locked to zero -- but consider adding Inclination if in 3D
+
+            //var myOffset = new Vector3(offSetX, offSetY, offSetZ);
+            //if (Parent != null) myOffset += Parent.Position(daysPastSinceStart, zoomlevels);
+            //return myOffset;
+
+            //get
+            //{
+            //// TODO: Convert our orbit info into a vector that we can use
+            //// to render something as a Unity GameObject
+
+            //// Consider whether or not we should be saving Vector3 in a 
+            //// private variable whenever we update our angle, or if it's
+            //// no slower to just calculate on demand like this.
+            //var offSetX = Mathf.Sin(OrbitalInitAngle + OrbitalOffsetAngle) * OrbitRadius;
+            //var offSetY = -Mathf.Cos(OrbitalInitAngle + OrbitalOffsetAngle) * OrbitRadius;
+            //const int offSetZ = 0; // Z is locked to zero -- but consider adding Inclination if in 3D
+
+            //var myOffset = new Vector3(offSetX, offSetY, offSetZ);
+            //if (Parent != null) myOffset += Parent.Position(daysPastSinceStart, zoomlevels);
+            //return myOffset;
+
+
+            //var radiansPerDay = 360 / (uint)OrbitalPeriod;
+            //var r = OrbitRadius;
+            //var t = radiansPerDay * daysPastSinceStart;
+            //var h = 0;
+            //var k = 0;
+
+            //var offSetX = (r * Mathf.Sin(t) + h) / zoomlevels;
+            //var offSetY = (r * Mathf.Cos(t) + k) / zoomlevels;
+
+            //var myOffset = new Vector3(offSetX, offSetY, 0);
+
+            //if (Parent != null) myOffset += Parent.Position(daysPastSinceStart, zoomlevels);
+
+            //if (this.RotationPeriod.Equals(24))
+            //{
+
+            //    var str = new StringBuilder();
+            //    //str.AppendLine("Earth position: (" + myOffset.x + "," + myOffset.y + ") should move with '" + radiansPerDay + "' radians a day and a OrbitalPeriod of '" + OrbitalPeriod + "'");
+            //    //str.AppendLine("daysPastSinceStart: " + daysPastSinceStart);
+            //    str.AppendLine("OrbitRadius: " + this.OrbitRadius);
+            //    str.AppendLine("Current radians: " + t + " of 360");
+
+            //    Debug.Log(str.ToString());
+            //}
+
+
+            //return myOffset;
+
+            //}
         }
+
 
         public void Update(ulong timeSinceStart)
         {
             // Advance our angle by the correct amount of time.
             //Debug.Log(string.Format("timeSinceStart: {0}", timeSinceStart));
 
-            OffsetAngle = timeSinceStart / ((float)TimeToOrbit * 2 * Mathf.PI);
+            OrbitalOffsetAngle = timeSinceStart / ((float)OrbitalPeriod * 2 * Mathf.PI);
             //Debug.Log("timeSinceStart" + timeSinceStart);
-            //Debug.Log("OffsetAngle" + OffsetAngle);
+            //Debug.Log("OrbitalOffsetAngle" + OrbitalOffsetAngle);
             // Update all of our children
             for (var i = 0; i < Orbitals.Count; i++)
             {
                 Orbitals[i].Update(timeSinceStart);
                 if (Orbitals[i].RotationPeriod.Equals(24))
                 {
-                    Debug.Log("OffsetAngle for Earth: " + Orbitals[i].OffsetAngle);
+                    //Debug.Log("OrbitalOffsetAngle for Earth: " + Orbitals[i].OrbitalOffsetAngle);
                 }
             }
         }
 
-        public ulong OrbitTimeForDistance()
+        public int OrbitTimeForDistance()
         {
             // FIXME: Make real math!
-            return 365 * 24 * 60 * 60;
+            return 365 * 24;
         }
 
         private int GraphicIDForType()
@@ -155,10 +231,15 @@ namespace Assets.Data.Models
             throw new IndexOutOfRangeException("Really, no automatic break???");
         }
 
+        private void OffsetBySomethingSomethingDarkSide()
+        {
+
+        }
+
         //public void MakeEarth()
         //{
-        //    OffsetAngle = 0;
-        //    OrbitalDistance = 150000000000;
+        //    OrbitalOffsetAngle = 0;
+        //    OrbitRadius = 150000000000;
         //    TimeToOrbit = 365 * 24 * 60 * 60;  // 1 year // 31536000 seconds
         //}
 
