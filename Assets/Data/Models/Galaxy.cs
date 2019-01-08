@@ -41,5 +41,12 @@ namespace Assets.Data.Models
 
             foreach (var ss in SolarSystems) ss.Update(timeSinceStart);
         }
+
+        public void Update(float timeSinceStart)
+        {
+            // TODO: Consider only updating PART of the galaxy if you have a CRAAAAAAZY number of solar system
+
+            foreach (var ss in SolarSystems) ss.Update(timeSinceStart);
+        }
     }
 }
