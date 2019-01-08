@@ -128,7 +128,7 @@ namespace Assets.Data.Models
                 Density = 3340,
                 Gravity = 1.6,
                 RotationPeriod = 708,
-                OrbitRadius = (ulong)57.9 * multiplierDistance,
+                OrbitRadius = (ulong)10.9 * multiplierDistance,
                 OrbitalPeriod = 27,
                 OrbitalInitAngle = 0
             };
