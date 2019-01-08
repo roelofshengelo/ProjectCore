@@ -8,10 +8,38 @@ namespace Assets.Data
     public class GameController : MonoBehaviour
     {
 
+        ///// <summary>
+        ///// Amount of days past since game start (including time skips)
+        ///// </summary>
+        //public ulong DaysPastSinceStart => (ulong)(galacticDay + (DaysInMonth * galacticMonth - 1) + (DaysInMonth * (galacticMonth - 1) * (galacticYear - 1)));
+
+
         /// <summary>
         /// Amount of days past since game start (including time skips)
         /// </summary>
-        public ulong DaysPastSinceStart => (ulong)(galacticDay + (30 * galacticMonth - 1) + (30 * (galacticMonth - 1) * (galacticYear - 1)));
+        public ulong DaysPastSinceStart()
+        {
+            // Start with the current day of the current month.
+            var result = (ulong)galacticDay;
+
+            // Than add days for all the months of the current year
+            if (galacticMonth > 1) result += (ulong)(DaysInMonth * (galacticMonth - 1)); // don't count all the days of the current month, this is already done
+
+            // Than add days for all the years that have past
+            if (galacticYear > 1)
+            {
+                // don't count all the days of the current year, this is already done
+                result += (ulong)((DaysInMonth * MonthsInYear) * (galacticYear - 1));
+            }
+            return result;
+        }
+
+
+        public int DaysInMonth = 30;
+        public int MonthsInYear = 12;
+        public int HoursInDay = 24;
+        public int MinutesInHours = 60;
+        public int SecondsInMinutes = 60;
 
         /// <summary>
         /// How many seconds past since the start
@@ -39,40 +67,45 @@ namespace Assets.Data
 
 
         private int _prevSecond = 0;
+        private float _prevTime = 0.0f;
         private void FixedUpdate()
         {
+            AdvanceTimeForSprites(_prevTime);
+            _prevTime = Time.time;
+
             if (_prevSecond >= (int)Time.time) return;
+
             AdvanceTimeDay(1);
             //AdvanceTimeMonth(6);
             //AdvanceTime(1);
             _prevSecond = (int)Time.time;
+            _prevTime = _prevSecond;
         }
 
+        /// <summary>
+        /// Advance the time of the entire galaxy by number of days.
+        /// </summary>
+        /// <param name="numDays"></param>
         public void AdvanceTimeDay(int numDays)
         {
-            Debug.Log("===== Current day: " + galacticDay + " of month: " + galacticMonth + " of year: " + galacticYear);
-            //Debug.Log("Current galacticTime: " + galacticTime);
-
             ulong daysInSeconds = (24 * 60 * 60) * (uint)numDays;
 
-            //galacticTime = galacticTime + (uint)daysInSeconds;
-
-            //Galaxy.Update(galacticTime);
             AdvanceTime(daysInSeconds);
 
             galacticDay += numDays;
 
             if (galacticMonth > 12)
             {
+                // Did a dirty fix to ensure the current year has no more than 12 months, should do something with the days as wel...
                 galacticDay = 1;
                 galacticMonth = 1;
                 galacticYear++;
                 return;
             }
 
-            if (galacticDay > 30)
+            if (galacticDay > DaysInMonth)
             {
-                // Dirty fix to ensure the current day is no more than 30, should do something with months and years ad stuff...
+                // Dirty fix to ensure the current month doesn't have more than 30 days, should do something with months and years...
                 // Don't do this to the seconds just yet since they determine the current place of the orbital
                 galacticDay = 1;
                 galacticMonth++;
@@ -82,7 +115,7 @@ namespace Assets.Data
 
         public void AdvanceTimeMonth(int numMonths)
         {
-            AdvanceTimeDay(numMonths * 30);
+            AdvanceTimeDay(numMonths * DaysInMonth);
         }
 
         /// <summary>
@@ -93,9 +126,20 @@ namespace Assets.Data
         {
             galacticTime = galacticTime + numSeconds;
 
-            Galaxy.Update(galacticTime);
+            // Is now handled by AdvanceTimeForSprites()
+            //Galaxy.Update(galacticTime);
             Debug.Log("===== Current day: " + galacticDay + " of month: " + galacticMonth + " of year: " + galacticYear);
             //Debug.Log("Current galacticTime: " + galacticTime);
+        }
+
+        private void AdvanceTimeForSprites(float timelasped)
+        {
+            var timeInDays = (float)timelasped * SecondsInMinutes * MinutesInHours * HoursInDay; // I think?
+            //timeInDays = timeInDays / 100000; // Gameplay speed?
+            timeInDays = timeInDays / 1000; // I don't like to wait while I'm testing orbital speeds, ratios, and the like.
+
+
+            Galaxy.Update(timeInDays);
         }
 
     }
