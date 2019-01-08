@@ -31,9 +31,12 @@ namespace Assets.Data
                 // don't count all the days of the current year, this is already done
                 result += (ulong)((DaysInMonth * MonthsInYear) * (galacticYear - 1));
             }
+
+            daysPastSinceStart = result;
             return result;
         }
 
+        private ulong daysPastSinceStart = 0;
 
         public int DaysInMonth = 30;
         public int MonthsInYear = 12;
@@ -47,7 +50,7 @@ namespace Assets.Data
         private ulong galacticTime;
         private int galacticDay = 1;
         private int galacticMonth = 1;
-        private int galacticYear = 1;
+        private int galacticYear = 4000;
 
         public Galaxy Galaxy;
 
@@ -70,6 +73,16 @@ namespace Assets.Data
         private float _prevTime = 0.0f;
         private void FixedUpdate()
         {
+            if (_prevSecond.Equals(0))
+            {
+                galacticTime = daysPastSinceStart * (ulong)(HoursInDay * MinutesInHours * SecondsInMinutes);
+                AdvanceTimeForSprites(galacticTime);
+
+                _prevSecond = (int)Time.time;
+                _prevTime = _prevSecond;
+                return;
+            }
+
             AdvanceTimeForSprites(_prevTime);
             _prevTime = Time.time;
 
