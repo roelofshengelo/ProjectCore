@@ -28,14 +28,19 @@ namespace Assets.Data.Views
         private TextureDataOrbitals textureData;
 
 
+        public Sprite[] DebugSprites;
+        public bool UseDebugSprites = false;
+        private bool hasDebugSprites = false;
+
         //public ulong zoomLevels = 1000000; 1x million
-        public ulong zoomLevels = 150000000000;
+        public int zoomLevels = 300;
 
         // Use this for initialization
         private void Start()
         {
             gameController = FindObjectOfType<GameController>();
 
+            if (DebugSprites != null && DebugSprites.Length > 0) hasDebugSprites = true;
             var solarSystemId = 0;
 
             //if (Stars.Length > 0 && Planets.Length > 0 && Moons.Length > 0)
@@ -71,6 +76,12 @@ namespace Assets.Data.Views
 
             ShowSolarSystem(solarSystemId);
         }
+
+        public void ShowSolarSystemZero()
+        {
+            ShowSolarSystem(0);
+        }
+
 
         public void ShowSolarSystem(int solarSystemID)
         {
@@ -113,6 +124,30 @@ namespace Assets.Data.Views
 
             var sr = go.AddComponent<SpriteRenderer>();
             sr.drawMode = SpriteDrawMode.Sliced;
+
+            if (hasDebugSprites && UseDebugSprites)
+            {
+                var pointyGameObject = new GameObject();
+
+                pointyGameObject.transform.SetParent(go.transform);
+                //pointyGameObject.transform.position = go.transform.position;
+                pointyGameObject.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, 1);
+
+                //orbitalGameObjectMap[orbital] = pointyGameObject;
+                //pointyGameObject.transform.SetParent(go.transform);
+
+                // Set our position.
+                //pointyGameObject.transform.position = go.transform.position;
+
+                // Add the thingy to the orbital
+                var pointyThingy = pointyGameObject.AddComponent<SpriteRenderer>();
+                pointyThingy.drawMode = SpriteDrawMode.Sliced;
+                pointyThingy.name = "pointy-thingy";
+                pointyThingy.sprite = DebugSprites[0];
+            }
+
+
+
 
             switch (orbital.Type)
             {
@@ -184,7 +219,7 @@ namespace Assets.Data.Views
 
         }
 
-        public void SetZoomLevel(ulong zl)
+        public void SetZoomLevel(int zl)
         {
             zoomLevels = zl;
             // Update planet positions
