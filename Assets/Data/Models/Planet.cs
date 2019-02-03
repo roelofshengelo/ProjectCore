@@ -84,7 +84,7 @@ namespace Assets.Data.Models
                 Density = 5427,
                 Gravity = 3.7,
                 RotationPeriod = 1408,
-                OrbitRadius = (ulong)57.9 * multiplierDistance,
+                OrbitRadius = (long)57.9 * multiplierDistance,
                 OrbitalPeriod = 88,
                 OrbitalInitAngle = 67
             };
@@ -102,7 +102,7 @@ namespace Assets.Data.Models
                 Density = 5243,
                 Gravity = 8.9,
                 RotationPeriod = -5832,
-                OrbitRadius = (ulong)108.2 * multiplierDistance,
+                OrbitRadius = (long)108.2 * multiplierDistance,
                 OrbitalPeriod = 224,
                 OrbitalInitAngle = 30
             };
@@ -117,7 +117,7 @@ namespace Assets.Data.Models
                 Density = 5514,
                 Gravity = 9.8,
                 RotationPeriod = 24,
-                OrbitRadius = (ulong)149.6 * multiplierDistance,
+                OrbitRadius = (long)149.6 * multiplierDistance,
                 OrbitalPeriod = 365,
                 OrbitalInitAngle = 338
             };
@@ -128,7 +128,7 @@ namespace Assets.Data.Models
                 Density = 3340,
                 Gravity = 1.6,
                 RotationPeriod = 708,
-                OrbitRadius = (ulong)10.9 * multiplierDistance,
+                OrbitRadius = (long)10.9 * multiplierDistance,
                 OrbitalPeriod = 27,
                 OrbitalInitAngle = 0
             };
@@ -145,7 +145,7 @@ namespace Assets.Data.Models
                 Density = 3933,
                 Gravity = 3.7,
                 RotationPeriod = 10,
-                OrbitRadius = (ulong)227.9 * multiplierDistance,
+                OrbitRadius = (long)227.9 * multiplierDistance,
                 OrbitalPeriod = 687,
                 OrbitalInitAngle = 300
             };
@@ -162,7 +162,7 @@ namespace Assets.Data.Models
                 Density = 1326,
                 Gravity = 23.1,
                 RotationPeriod = 10,
-                OrbitRadius = (ulong)778.6 * multiplierDistance,
+                OrbitRadius = (long)778.6 * multiplierDistance,
                 OrbitalPeriod = 4331,
                 OrbitalInitAngle = 260
             };
@@ -179,7 +179,7 @@ namespace Assets.Data.Models
                 Density = 687,
                 Gravity = 9,
                 RotationPeriod = 10,
-                OrbitRadius = (ulong)1433.5 * multiplierDistance,
+                OrbitRadius = (long)1433.5 * multiplierDistance,
                 OrbitalPeriod = 10747,
                 OrbitalInitAngle = 135
             };
@@ -196,7 +196,7 @@ namespace Assets.Data.Models
                 Density = 1271,
                 Gravity = 8.7,
                 RotationPeriod = -17,
-                OrbitRadius = (ulong)2872.5 * multiplierDistance,
+                OrbitRadius = (long)2872.5 * multiplierDistance,
                 OrbitalPeriod = 30589,
                 OrbitalInitAngle = 120
             };
@@ -212,7 +212,7 @@ namespace Assets.Data.Models
                 Density = 1638,
                 Gravity = 11.0,
                 RotationPeriod = 16,
-                OrbitRadius = (ulong)4495.1 * multiplierDistance,
+                OrbitRadius = (long)4495.1 * multiplierDistance,
                 OrbitalPeriod = 59800,
                 OrbitalInitAngle = 100
             };
@@ -228,7 +228,7 @@ namespace Assets.Data.Models
                 Density = 2095,
                 Gravity = 0.7,
                 RotationPeriod = -153,
-                OrbitRadius = (ulong)5906.4 * multiplierDistance,
+                OrbitRadius = (long)5906.4 * multiplierDistance,
                 OrbitalPeriod = 90560,
                 OrbitalInitAngle = 50
             };

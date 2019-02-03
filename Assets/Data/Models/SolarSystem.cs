@@ -13,7 +13,8 @@ namespace Assets.Data.Models
         public bool randomizeMoons = false;
 
 
-        public bool Sol = true;
+        public bool Sol = false;
+
         // Really? We need to add a whole lot more planets if Pluto is a planet, just saying...
         public bool PlutoIsAPlanet = false;
 
@@ -27,6 +28,27 @@ namespace Assets.Data.Models
                 return;
             }
 
+            GenerateDebugSystem();
+
+        }
+
+        private void GenerateDebugSystem()
+        {
+            var star = new Orbital(OrbitalType.Star);
+            AddOrbital(star);
+
+
+            var p = new Orbital(OrbitalType.Planet);
+            p.GraphicID = 2;
+            p.OrbitRadius = 100;
+            p.OrbitalPeriod = 10;
+            star.AddOrbital(p);
+
+        }
+
+
+        private void GenerateRandomSystem()
+        {
             // Make a single star with a single planet orbiting
             var myStar = new Orbital(OrbitalType.Star);
             AddOrbital(myStar);
@@ -40,7 +62,6 @@ namespace Assets.Data.Models
             }
             Debug.WriteLine("This solar system has:");
             Debug.WriteLine(this.Orbitals.Count + " stars");
-
         }
 
         private void GenerateSol()

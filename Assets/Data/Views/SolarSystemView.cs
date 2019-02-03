@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
-using Assets.Data.Bridge;
+//using Assets.Data.Bridge;
 using Assets.Data.Models;
+using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 
 namespace Assets.Data.Views
@@ -25,7 +27,7 @@ namespace Assets.Data.Views
         //private int _numOfPlanets = 1;
         //private int _numOfMoons = 1;
         private List<Sprite[]> _sprites;
-        private TextureDataOrbitals textureData;
+        //private TextureData textureData;
 
 
         public Sprite[] DebugSprites;
@@ -39,9 +41,13 @@ namespace Assets.Data.Views
         private void Start()
         {
             gameController = FindObjectOfType<GameController>();
+            Sprites = GetMeMySprites(Orbital.OrbitalType.Star);
+
 
             if (DebugSprites != null && DebugSprites.Length > 0) hasDebugSprites = true;
             var solarSystemId = 0;
+
+
 
             //if (Stars.Length > 0 && Planets.Length > 0 && Moons.Length > 0)
             //{
@@ -75,6 +81,60 @@ namespace Assets.Data.Views
 
 
             ShowSolarSystem(solarSystemId);
+        }
+
+        private Sprite[] GetMeMySprites(Orbital.OrbitalType orbitalType)
+        {
+
+            switch (orbitalType)
+            {
+                case Orbital.OrbitalType.Star:
+
+                    var stars = GameController.Stars();
+                    if (stars is null) throw new NoNullAllowedException("Sprites for stars are not set!");
+                    if (stars.Length == 0) throw new NoNullAllowedException("Sprites for stars are empty!");
+
+                    Stars = new Sprite[stars.Length];
+                    for (var i = 0; i < stars.Length; i++)
+                    {
+                        Stars[i] = stars[i] as Sprite;
+                    }
+
+                    break;
+                case Orbital.OrbitalType.Planet:
+
+                    var planets = GameController.Stars();
+                    if (planets is null) throw new NoNullAllowedException("Sprites for planets are not set!");
+                    if (planets.Length == 0) throw new NoNullAllowedException("Sprites for planets are empty!");
+
+                    Stars = new Sprite[planets.Length];
+                    for (var i = 0; i < planets.Length; i++)
+                    {
+                        Stars[i] = planets[i] as Sprite;
+                    }
+
+                    break;
+                case Orbital.OrbitalType.Moon:
+
+                    var moon = GameController.Stars();
+                    if (moon is null) throw new NoNullAllowedException("Sprites for moons are not set!");
+                    if (moon.Length == 0) throw new NoNullAllowedException("Sprites for moons are empty!");
+
+                    Stars = new Sprite[moon.Length];
+                    for (var i = 0; i < moon.Length; i++)
+                    {
+                        Stars[i] = moon[i] as Sprite;
+                    }
+
+                    break;
+                    //case default
+                    //    throw new ArgumentOutOfRangeException("GetMeMySprites cannot get youre sprites :(");
+
+            }
+
+            if (Stars is null) throw new ArgumentOutOfRangeException("GetMeMySprites cannot get youre sprites :(");
+
+            return Stars;
         }
 
         public void ShowSolarSystemZero()
@@ -204,6 +264,12 @@ namespace Assets.Data.Views
         {
             // Why not loop through each of our orbital images and update their
             // unity position based on an zoom level that might have changed?
+
+            if (solarSystem is null)
+            {
+                Debug.Log("Solarsystem is NULL");
+                return;
+            }
 
             if (solarSystem.Orbitals.Count > 0)
             {

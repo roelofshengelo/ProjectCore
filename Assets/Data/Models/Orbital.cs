@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Assets.Data.Bridge;
+//using Assets.Data.Bridge;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -27,7 +27,7 @@ namespace Assets.Data.Models
 
         public List<Orbital> Orbitals;
 
-        public TextureDataOrbitals TextureData;
+        //public TextureDataOrbitals TextureData;
 
         public int GraphicID;
 
@@ -43,14 +43,14 @@ namespace Assets.Data.Models
 
 
 
-        private ulong _radius = 0;
+        private long _radius = 0;
         private ulong _diameter = 0;
         private ulong _circumference = 0;
         /// <summary>
         /// Average distance to object which this orbits in km
         /// </summary>
 
-        public ulong OrbitRadius
+        public long OrbitRadius
         {
             get => _radius;
             set
@@ -102,7 +102,7 @@ namespace Assets.Data.Models
 
         public Orbital()
         {
-            OrbitalPeriod = 365 * 24; // 1 Earth year in hour
+            OrbitalPeriod = 365;
             Orbitals = new List<Orbital>();
             OrbitalInitAngle = 0; // Random.Range(0, Mathf.PI * 2);
             OrbitalOffsetAngle = 0;
@@ -113,7 +113,7 @@ namespace Assets.Data.Models
 
         public Orbital(OrbitalType orbitalType)
         {
-            OrbitalPeriod = 365 * 24; // 1 Earth year in hour
+            OrbitalPeriod = 365;
             Orbitals = new List<Orbital>();
             OrbitalInitAngle = 0; // Random.Range(0, Mathf.PI * 2);
             OrbitalOffsetAngle = 0;
@@ -139,7 +139,12 @@ namespace Assets.Data.Models
                 var offSetY = -Mathf.Cos(OrbitalInitAngle + OrbitalOffsetAngle) * OrbitRadius;
                 const int offSetZ = 0; // Z is locked to zero -- but consider adding Inclination if in 3D
 
+
+
                 var myOffset = new Vector3(offSetX, offSetY, offSetZ);
+                if (Parent != null) Debug.Log("myOffset: " + (myOffset + Parent.Position));
+                else Debug.Log("myOffset: " + myOffset);
+
 
                 if (Parent != null) myOffset += Parent.Position;
 

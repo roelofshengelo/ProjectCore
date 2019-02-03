@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Assets.Data.Models;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.Data
 {
@@ -36,6 +39,17 @@ namespace Assets.Data
             return result;
         }
 
+        internal static Object[] Stars()
+        {
+            var test = Resources.LoadAll("Stars/", typeof(Sprite));
+
+
+
+
+
+            return test;
+        }
+
         private ulong daysPastSinceStart = 0;
 
         public int DaysInMonth = 30;
@@ -50,7 +64,7 @@ namespace Assets.Data
         private ulong galacticTime;
         private int galacticDay = 1;
         private int galacticMonth = 1;
-        private int galacticYear = 4000;
+        private int galacticYear = 1; // Could set this to 4000? Or over 9000!!!
 
         public Galaxy Galaxy;
 
@@ -68,53 +82,49 @@ namespace Assets.Data
         {
         }
 
-
-        private int _prevSecond = 0;
-        private float _prevTime = 0.0f;
+        private int prevSecond = 0;
+        private float prevTime = 0.0f;
         private void FixedUpdate()
         {
-            if (_prevSecond.Equals(0))
-            {
-                galacticTime = daysPastSinceStart * (ulong)(HoursInDay * MinutesInHours * SecondsInMinutes);
-                AdvanceTimeForSprites(galacticTime);
+            //Setting the starting timings
+            StartupGalaxy();
 
-                _prevSecond = (int)Time.time;
-                _prevTime = _prevSecond;
-                return;
+            //Redraw the sprites to ensure a smooth transition
+            UpdateGalaxy(prevTime);
+
+
+            prevTime = Time.time;
+            //Update the galactic calender to pass 1 day every second
+            if (prevSecond < (int)Time.time)
+            {
+                AdvanceGalaxyTime(1);
+                prevSecond = (int)Time.time;
+                prevTime = prevSecond;
             }
 
-            AdvanceTimeForSprites(_prevTime);
-            _prevTime = Time.time;
-
-            if (_prevSecond >= (int)Time.time) return;
-
-            AdvanceTimeDay(1);
-            //AdvanceTimeMonth(6);
-            //AdvanceTime(1);
-            _prevSecond = (int)Time.time;
-            _prevTime = _prevSecond;
         }
+
+
+        private void StartupGalaxy()
+        {
+            if (!prevSecond.Equals(0)) return;
+            galacticTime = daysPastSinceStart * (ulong)(HoursInDay * MinutesInHours * SecondsInMinutes);
+            UpdateGalaxy(galacticTime);
+            prevSecond = (int)Time.time;
+            prevTime = prevSecond;
+        }
+
+
 
         /// <summary>
         /// Advance the time of the entire galaxy by number of days.
         /// </summary>
         /// <param name="numDays"></param>
-        public void AdvanceTimeDay(int numDays)
+        public void AdvanceGalaxyTime(int numDays)
         {
-            ulong daysInSeconds = (24 * 60 * 60) * (uint)numDays;
-
-            AdvanceTime(daysInSeconds);
-
+            ulong daysInSeconds = (ulong)(SecondsInMinutes * MinutesInHours * HoursInDay) * (ulong)numDays;
+            SetGalaxyDate(daysInSeconds);
             galacticDay += numDays;
-
-            if (galacticMonth > 12)
-            {
-                // Did a dirty fix to ensure the current year has no more than 12 months, should do something with the days as wel...
-                galacticDay = 1;
-                galacticMonth = 1;
-                galacticYear++;
-                return;
-            }
 
             if (galacticDay > DaysInMonth)
             {
@@ -122,37 +132,50 @@ namespace Assets.Data
                 // Don't do this to the seconds just yet since they determine the current place of the orbital
                 galacticDay = 1;
                 galacticMonth++;
-                return;
+            }
+
+            if (galacticMonth > MonthsInYear)
+            {
+                // Did a dirty fix to ensure the current year has no more than 12 months, should do something with the days as wel...
+                galacticDay = 1;
+                galacticMonth = 1;
+                galacticYear++;
             }
         }
 
         public void AdvanceTimeMonth(int numMonths)
         {
-            AdvanceTimeDay(numMonths * DaysInMonth);
+            AdvanceGalaxyTime(numMonths * DaysInMonth);
         }
 
         /// <summary>
         /// Really, in seconds? Maybe for RTS on planets or something
         /// </summary>
         /// <param name="numSeconds"></param>
-        public void AdvanceTime(ulong numSeconds)
+        public void SetGalaxyDate(ulong numSeconds)
         {
             galacticTime = galacticTime + numSeconds;
-
-            // Is now handled by AdvanceTimeForSprites()
-            //Galaxy.Update(galacticTime);
             Debug.Log("===== Current day: " + galacticDay + " of month: " + galacticMonth + " of year: " + galacticYear);
             //Debug.Log("Current galacticTime: " + galacticTime);
         }
 
-        private void AdvanceTimeForSprites(float timelasped)
+        private void UpdateGalaxy(float timelapsed)
         {
-            var timeInDays = (float)timelasped * SecondsInMinutes * MinutesInHours * HoursInDay; // I think?
+            //Debug.Log("===== Current day: " + galacticDay + " of month: " + galacticMonth + " of year: " + galacticYear + " (= timelapsed " + timelapsed + " / galacticTime " + galacticTime + ")");
+
+
+            Galaxy.Update(timelapsed);
+
+            //var timeInDays = (float)timelapsed * SecondsInMinutes * MinutesInHours * HoursInDay; // I think?
+
+            //Debug.Log(timelapsed + "===== Current day: " + galacticDay + " of month: " + galacticMonth + " of year: " + galacticYear + " (= total seconds " + timeInDays + ")");
+
             //timeInDays = timeInDays / 100000; // Gameplay speed?
-            timeInDays = timeInDays / 1000; // I don't like to wait while I'm testing orbital speeds, ratios, and the like.
+            //timeInDays = timeInDays / 1000; // I don't like to wait while I'm testing orbital speeds, ratios, and the like.
+            //Galaxy.Update(timeInDays); // Way way to fast
 
-
-            Galaxy.Update(timeInDays);
+            // Advance time by 1 day every 0.x frames?
+            //Galaxy.Update(SecondsInMinutes * MinutesInHours * HoursInDay);
         }
 
     }
