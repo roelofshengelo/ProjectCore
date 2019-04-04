@@ -1,0 +1,74 @@
+﻿[	title]
+Born in space
+
+[	basic-backstory]
+Earth has no more air? inhabital. starts living near the sun in massiv sun-rings, to cliché?
+currency = coffee beans because [insert compelling reason here]?
+
+[	basic-idea]
+diffirent races(4/6) maybe more
+	-[rHu] = race-human
+	-[rXx] = race-xxx
+alter-ego races(4/6) maybe more, copy of default-race with opposite perks and hate/detest each other
+	-[aHu] = alter-ego-human
+	-[aXx] = alter-ego-xxx
+	
+[	basic-brainfart]
+jerk race(s) [jH], same perks + agressive boost. and hate/detest each other, search out to destroy
+use 1 [jH] as [0.000000001% chance] to find in random event?
+use 1 [jH] as [end-game] (mutual) enemy? copy/merging of strongest [researched stuff] players
+use 1 [jH] as [anti-cheat] - [jH] is in super overpowerd mode? all the [researched stuff]
+[jH] copy of player-race?
+[jH] random 1 of all the current-ingame-races?
+[jH] unplayeble race?
+
+[	basic-brainfart II]
+multiple cultures per planet
+internal strugle?
+deep-layered population relationships?
+
+[	basic-brainfart II]
+how will the player play the game?
+player is god-like, omniscient to specific race and cannot be killed directly
+- does need alive entities in current population to continue
+- does not need research-discovering (research tree is completly known from the start)
+- doesn't allways get first priority in orders
+
+player is unit/group, unknowing-leader-unit in part of a larger community/race, can be killed by other entity
+- does need alive entitie(s) in starting-race to continue
+- does need need research-discovering (few/none research tree is known from the start)
+- does get get first priority in orders
+
+player is idea/conviction/resolution can be stopped/killd (technically)
+- does need alive entitie in the universe to continue
+- ??
+- ??
+- maybe not this one? when game is a game/_done_?
+
+[	basic-specifics... specifications!]
+view limited to radar tech
+1st lvl normal size	- 10-25% center part from star?
+		mini?		- 100x length/size ship?
+		
+2nd-9th lvl 		- 1st lvl +(5% x #level)
+10th-xx lvl			- (1,5 max [star-system-view]) + (0,5 max [star-system-view])
+
+[	views]
+[star-view]
+- buildings/houses/workshop
+- resources/barrenland/unpasseble
+
+[star-system-view]
+- start area: planets like our own star system ([rHu] - testing)
+- skirmish? start area random size, random planets, minimum of 4? maximum somewhere near 100? more?
+- hidden planet ("9th" planet not found, will ony destroy vessels until req. tech is found/end-game-researched/trade) ([0.000000001% chance])
+- astroid belts possibility
+
+[galaxy-view]
+- different stars clusterd togehter (surrounding a black-hole maybe?)
+- (prehistorical/ancient tech?)
+- (transportation-sytem to other galaxies? research)
+- ()
+
+[galaxy-system-view]
+- |^^| -- just somthing of above, drop it?
